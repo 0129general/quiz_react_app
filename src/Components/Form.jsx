@@ -3,10 +3,10 @@ import { useGlobalContext } from "../context";
 const Form = () => {
   const { quiz, handleSubmit, handleChange, error } = useGlobalContext();
   return (
-    <div className="justify-center flex items-center min-h-screen ">
+    <div className="justify-center flex items-center min-h-screen">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-5 md:p-8 max-w-[500px] space-y-8 shadow rounded-lg w-11/12 "
+        className="bg-white p-5 md:p-8 max-w-[500px] space-y-8 shadow rounded-lg w-11/12"
       >
         <h2 className="text-3xl font-medium">Setup Quiz</h2>
         <div className="flex flex-col space-y-2">
@@ -34,7 +34,6 @@ const Form = () => {
             className="bg-gray-200 p-2 rounded-md outline-0 focus:bg-gray-300"
             value={quiz.category}
             onChange={handleChange}
-           
           >
             <option value="sports">sports</option>
             <option value="politics">politics</option>
@@ -52,7 +51,6 @@ const Form = () => {
             className="bg-gray-200 p-2 rounded-md outline-0 focus:bg-gray-300"
             value={quiz.difficulty}
             onChange={handleChange}
-           
           >
             <option value="easy">easy</option>
             <option value="medium">medium</option>
@@ -69,11 +67,9 @@ const Form = () => {
             className="bg-gray-200 p-2 rounded-md outline-0 focus:bg-gray-300"
             value={quiz.type}
             onChange={handleChange}
-           
           >
             <option value="multiple">multiple choice</option>
             <option value="boolean">true or false</option>
-           
           </select>
         </div>
         {error && (
@@ -83,7 +79,7 @@ const Form = () => {
         )}
         <button
           type="submit"
-          className="bg-yellow-600 rounde-md w-full p-2 text-white hover:bg-yellow-500"
+          className="bg-yellow-600 rounded-md w-full p-2 text-white hover:bg-yellow-500"
         >
           Start
         </button>
