@@ -1,35 +1,57 @@
-import { useGlobalContext } from "../context";
 import Confetti from "react-confetti";
+import { useGlobalContext } from "../context";
 
 const Modal = () => {
   const { closeModal, isModalOpen, correct, questions } = useGlobalContext();
-  let score = ((correct / questions.length) * 100).toFixed(0);
+  const score = ((correct / questions.length) * 100).toFixed(0);
+  const isPass = score > 40;
+
+  if (!isModalOpen) return null;
+
   return (
-    <>
-      {isModalOpen && (
-        <div className="absolute top-0 left-0 h-screen w-full flex items-center bg-[rgba(0,0,0,.5)]">
-          {score > 40 && <Confetti />}
-          <div className=" text-center bg-white p-8 mx-auto rounded-lg max-w-[600px] w-11/12">
-            <h4 className="text-3xl pb-3 text-center font-bold">
-              Your score is{" "}
-              <span className={score > 40 ? "text-green-600" : "text-red-600"}>
-                {score}%
-              </span>
-            </h4>
-            <p className="py-2">
-              You got {correct}/{questions.length}
+    <div className="fixed inset-0 flex items-center justify-center z-50">
+      {/* Overlay with blur effect */}
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+      
+      {/* Confetti effect for passing score */}
+      {isPass && <Confetti recycle={false} numberOfPieces={500} />}
+
+      {/* Modal Content */}
+      <div className="relative transform transition-all duration-300 ease-in-out 
+                    bg-white dark:bg-gray-800 rounded-2xl shadow-2xl 
+                    p-8 mx-4 max-w-md w-full">
+        <h4 className="text-4xl font-bold mb-6 dark:text-white">
+          Your Score:{' '}
+          <span className={`${isPass ? 'text-green-500' : 'text-red-500'}`}>
+            {score}%
+          </span>
+        </h4>
+
+        <div className="space-y-4">
+          <p className="text-lg dark:text-gray-200">
+            You got <span className="font-semibold">{correct}</span> out of{' '}
+            <span className="font-semibold">{questions.length}</span> questions
+          </p>
+          
+          {isPass && (
+            <p className="text-xl font-medium text-green-500 animate-bounce">
+              🎉 Congratulations! 🎉
             </p>
-            {(score > 40) && <p className="py-2 font-medium">Congrats!!!</p>}
-            <button
-              className="bg-yellow-600 py-2 px-7 rounded-xl text-white mt-2 hover:bg-yellow-500"
-              onClick={closeModal}
-            >
-              Play Again
-            </button>
-          </div>
+          )}
+
+          <button
+            onClick={closeModal}
+            className="w-full py-3 px-8 rounded-xl text-white font-medium
+                     bg-gradient-to-r from-yellow-500 to-yellow-600
+                     hover:from-yellow-600 hover:to-yellow-700
+                     transform transition-all duration-200 hover:scale-105
+                     focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50"
+          >
+            Play Again
+          </button>
         </div>
-      )}
-    </>
+      </div>
+    </div>
   );
 };
 
