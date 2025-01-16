@@ -1,7 +1,8 @@
-import { useGlobalContext } from "./context";
 import Form from "./Components/Form";
 import Loading from "./Components/Loading";
 import Modal from "./Components/Modal";
+import { useGlobalContext } from "./context";
+
 const App = () => {
   const {
     waiting,
@@ -12,64 +13,63 @@ const App = () => {
     checkAnswer,
   } = useGlobalContext();
 
-  if (waiting) {
-    return <Form />;
-  }
-  if (loading) {
-    return <Loading />;
-  }
+  if (waiting) return <Form />;
+  if (loading) return <Loading />;
 
   const { incorrect_answers, correct_answer, question } = questions[index];
-  const answers = [...incorrect_answers];
-  if (incorrect_answers.length > 1) {
-    let num = Math.floor(Math.random() * 4);
-    if (num === 3) {
-      answers.push(correct_answer);
-    } else {
-      answers.push(answers[num]);
-      answers[num] = correct_answer;
-    }
-  } else {
-    let num = Math.floor(Math.random() * 2);
-    answers.push(answers[num]);
-    answers[num] = correct_answer;
-  }
+  
+  // Better answer randomization
+  const shuffleAnswers = (correct, incorrect) => {
+    const allAnswers = [...incorrect];
+    const randomIndex = Math.floor(Math.random() * (allAnswers.length + 1));
+    allAnswers.splice(randomIndex, 0, correct);
+    return allAnswers;
+  };
+
+  const answers = shuffleAnswers(correct_answer, incorrect_answers);
+
   return (
-    <main className="min-h-screen flex items-center justify-center">
+    <main className="min-h-screen flex items-center justify-center bg-gray-50">
       <Modal />
-      <div className="p-3 py-5 md:p-8 bg-white shadow rounded-lg max-w-[800px] w-11/12 min-h-[300px]">
-        <p className="text-right pb-2 text-green-600">
-          Number:{" "}
-          <span>
-            {index + 1}/{questions.length}
-          </span>
-        </p>
-        <div className="mt-3">
-          <p
-            className="text-center font-medium text-2xl lg:text-3xl leading-loose"
+      <div className="p-4 md:p-8 bg-white shadow-lg rounded-xl max-w-[800px] w-11/12 min-h-[300px] transition-all">
+        <div className="flex justify-between items-center mb-6">
+          <span className="text-sm text-gray-500">Quiz Progress</span>
+          <p className="text-green-600 font-medium">
+            Question {index + 1} of {questions.length}
+          </p>
+        </div>
+
+        <div className="space-y-6">
+          <h2
+            className="text-center font-semibold text-xl md:text-2xl lg:text-3xl leading-relaxed text-gray-800"
             dangerouslySetInnerHTML={{ __html: question }}
           />
-          <div className="grid grid-cols-1 my-5 space-y-2 place-content-center">
-            {answers.map((answer, index) => {
-              return (
-                <button
-                  onClick={() => checkAnswer(answer === correct_answer)}
-                  key={index}
-                  className="bg-blue-500 w-4/5 rounded-lg mx-auto text-white p-2 hover:bg-blue-400"
-                  dangerouslySetInnerHTML={{
-                    __html: answer,
-                  }}
-                />
-              );
-            })}
+          
+          <div className="grid gap-3 my-8">
+            {answers.map((answer, idx) => (
+              <button
+                onClick={() => checkAnswer(answer === correct_answer)}
+                key={`answer-${idx}`}
+                className="w-full px-6 py-3 rounded-lg text-white bg-blue-500 
+                         hover:bg-blue-600 active:bg-blue-700 transition-colors
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                dangerouslySetInnerHTML={{ __html: answer }}
+                aria-label={`Answer option ${idx + 1}`}
+              />
+            ))}
           </div>
         </div>
+
         <div className="flex justify-center pt-4">
           <button
             onClick={nextQuestion}
-            className="py-2 px-7 text-medium flex rounded-lg text-white bg-yellow-600 hover:bg-green-700"
+            className="py-3 px-8 rounded-lg text-white bg-green-600 
+                     hover:bg-green-700 active:bg-green-800 transition-colors
+                     focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
+                     disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Next question"
           >
-            Next question
+            Next Question
           </button>
         </div>
       </div>
